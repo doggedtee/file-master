@@ -30,6 +30,7 @@
           <p class="drop-zone__hint">or click to browse</p>
           <input type="file" accept=".pdf" id="fileInput" hidden />
         </div>
+        <p class="upload-error" id="uploadError"></p>
         <p class="upload-note">
           Text is extracted on the server, chunked, embedded via Claude, and searched semantically.
         </p>
@@ -68,6 +69,7 @@
 
   </div>
 
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

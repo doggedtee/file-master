@@ -18,6 +18,7 @@ const btnNew          = document.getElementById("btnNew");
 const subtitle        = document.getElementById("subtitle");
 const processingStep  = document.getElementById("processingStep");
 const progressFill    = document.getElementById("progressFill");
+const uploadError     = document.getElementById("uploadError");
 
 
 // State
@@ -44,6 +45,8 @@ async function handleFile(file) {
     return;
   }
 
+  uploadError.style.display = "none";
+  uploadError.textContent = "";
   showScreen("processing");
   setProgress("Uploading PDF to server...", 10);
 
@@ -72,7 +75,8 @@ async function handleFile(file) {
 
   } catch (err) {
     showScreen("upload");
-    alert("Error: " + err.message);
+    uploadError.textContent = err.message;
+    uploadError.style.display = "block";
   }
 }
 
@@ -94,7 +98,11 @@ function addMessage(role, content) {
 
   const text = document.createElement("div");
   text.className = `message__content message__content--${role}`;
-  text.textContent = content.replace(/\*\*(.*?)\*\*/g, "$1");
+  if (role === "assistant") {
+    text.innerHTML = marked.parse(content);
+  } else {
+    text.textContent = content;
+  }
 
   msg.appendChild(avatar);
   msg.appendChild(text);
