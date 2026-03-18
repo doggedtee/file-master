@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Document Oracle</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+</head>
+<body>
+
+  <div class="app">
+
+    <!-- Header -->
+    <header class="header">
+      <div class="header__left">
+        <h1 class="header__title">DOCUMENT ORACLE</h1>
+        <p class="header__subtitle" id="subtitle">Upload a PDF to begin</p>
+      </div>
+      <button class="btn-new" id="btnNew">NEW DOC</button>
+    </header>
+
+    <!-- Main area -->
+    <main class="body">
+
+      <!-- Upload screen -->
+      <section id="uploadScreen" class="screen">
+        <div class="drop-zone" id="dropZone">
+          <div class="drop-zone__icon">📄</div>
+          <p class="drop-zone__title">DROP YOUR PDF HERE</p>
+          <p class="drop-zone__hint">or click to browse</p>
+          <input type="file" accept=".pdf" id="fileInput" hidden />
+        </div>
+        <p class="upload-note">
+          Text is extracted on the server, chunked, embedded via Claude, and searched semantically.
+        </p>
+      </section>
+
+      <!-- Processing screen -->
+      <section id="processingScreen" class="screen" style="display:none">
+        <div class="spinner"></div>
+        <p class="processing__label">PROCESSING</p>
+        <p class="processing__step" id="processingStep">Extracting text...</p>
+        <div class="progress-bar">
+          <div class="progress-bar__fill" id="progressFill" style="width:0%"></div>
+        </div>
+      </section>
+
+      <!-- Chat screen -->
+      <section id="chatScreen" class="screen" style="display:none">
+        <div class="messages" id="messages"></div>
+      </section>
+
+    </main>
+
+    <!-- Input footer -->
+    <footer class="input-area" id="inputArea" style="display:none">
+      <div class="input-row">
+        <textarea
+          id="userInput"
+          class="input-box"
+          placeholder="Ask a question about the document..."
+          rows="1"
+        ></textarea>
+        <button class="btn-ask" id="btnAsk">ASK →</button>
+      </div>
+      <p class="input-hint">Enter to send · Shift+Enter for new line</p>
+    </footer>
+
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>
