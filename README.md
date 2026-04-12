@@ -1,55 +1,64 @@
-# Document Oracle — PDF Chat (Flask + Claude)
+# Document Oracle — PDF Chat (FastAPI + Claude)
 Chat with your PDF documents using RAG and Claude API.
+
 ## Project Structure
 ```
-pdf-chat/
-├── app.py              # Flask server, routes
-├── rag.py              # Chunks, embeddings, cosine search
-├── claude_client.py    # Claude API requests
+file-master/
+├── app.py              # FastAPI server, routes
+├── rag.py              # Chunks, embeddings, semantic search
+├── claude_client.py    # Claude API client
 ├── requirements.txt
-├── .env                # Your API key (don't commit!)
+├── .env                # Your API key
 ├── static/
 │   ├── css/style.css   # Styles
 │   └── js/main.js      # UI logic
 └── templates/
     └── index.html      # HTML template
 ```
+
 ## Setup
-### 1. Install dependencies
+
+### 1. Clone the repo
+```bash
+git clone https://github.com/dam1r/file-master.git
+cd file-master
+```
+
+### 2. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
-### 2. Create .env file
-```bash
-cp .env.example .env
-```
-Open `.env` and paste your Anthropic API key:
+
+### 3. Create .env file and add your Anthropic API key
 ```
 ANTHROPIC_API_KEY=sk-ant-...
 ```
-### 3. Start the server
+
+### 4. Start the server
 ```bash
-python app.py
+python -m uvicorn app:app --reload --port 5000
 ```
-### 4. Open browser
+
+### 5. Open browser
 ```
 http://localhost:5000
 ```
+
 ## How it works (RAG pipeline)
 ```
-PDF is uploaded to the server (Flask)
+PDF is uploaded to the server (FastAPI)
   ↓
 pdfplumber extracts the text
   ↓
-rag.py splits it into chunks of ~400 words
+rag.py splits it into chunks of ~200 words
   ↓
-Each chunk → vector via Claude API (claude_client.py)
+Each chunk → vector via sentence-transformers (multi-qa-mpnet-base-dot-v1)
   ↓
 User asks a question
   ↓
 Question also → vector
   ↓
-cosine_similarity finds top-4 similar chunks
+Dot product similarity finds top-4 relevant chunks
   ↓
 Claude answers based on those chunks
 ```
