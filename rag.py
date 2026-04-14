@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 client = anthropic.Anthropic()
-model = SentenceTransformer("multi-qa-mpnet-base-dot-v1")
+model = SentenceTransformer("all-MiniLM-L6-v2") # multi-qa-mpnet-base-dot-v1
 
 _chunks = []
 _embeddings = []
