@@ -12,6 +12,8 @@ app = FastAPI()
 app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="templates")
 
+_chat_history = []
+
 @app.get("/")
 async def index(request: Request):
     """ Main page """
@@ -20,6 +22,7 @@ async def index(request: Request):
 
 @app.post("/upload")
 async def upload(file: UploadFile = File(...)):
+    _chat_history.clear()
     if not file.filename.endswith(".pdf"):
         return JSONResponse({"error": "Only PDF files are supported"}, status_code=400)
 
@@ -58,14 +61,8 @@ async def ask(request: Request):
         return JSONResponse({"error": "Question is empty"}, status_code=400)
 
     try:
-        # find top-4 relevant chunks
-        relevant_chunks = find_relevant_chunks(question, top_k=4)
-
-        if not relevant_chunks:
-            return JSONResponse({"error": "No document indexed. Please upload a PDF first."}, status_code=400)
-
         # get answer from Claude
-        answer = ask_claude(question, relevant_chunks)
+        answer = ask_claude(question, find_relevant_chunks, _chat_history)
 
         return JSONResponse({"answer": answer})
 
