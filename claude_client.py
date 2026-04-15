@@ -49,6 +49,7 @@ def run_agent(question: str, search_fn, history) -> str:
             for block in response.content:
                 if block.type == "tool_use":
                     query = block.input["query"]
+                    print(f"🔍 Searching: {query}")
                     chunks = search_fn(query)
                     result = "\n\n".join(chunks)
 

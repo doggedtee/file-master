@@ -21,31 +21,32 @@ async def index(request: Request):
 
 
 @app.post("/upload")
-async def upload(file: UploadFile = File(...)):
-    _chat_history.clear()
-    if not file.filename.endswith(".pdf"):
-        return JSONResponse({"error": "Only PDF files are supported"}, status_code=400)
+async def upload(files: list[UploadFile] = File(...)):
+    results = []
+    for file in files:
+        if not file.filename.endswith(".pdf"):
+            return JSONResponse({"error": "Only PDF files are supported"}, status_code=400)
 
-    try:
+        try:
 
-        # read PDF and extract text with pdfplumber
-        pdf_bytes = await file.read()
-        text = extract_text(pdf_bytes)
+            # read PDF and extract text with pdfplumber
+            pdf_bytes = await file.read()
+            text = extract_text(pdf_bytes)
 
-        if not text.strip():
-            return JSONResponse({"error": "Could not extract text from PDF"}, status_code=400)
+            if not text.strip():
+                continue
         
-        # build RAG index (chunks + embeddings)
-        chunk_count = build_index(text)
+            # build RAG index (chunks + embeddings)
+            chunk_count = build_index(text, file.filename)
+            results.append({"filename": file.filename, "chunk_count": chunk_count})
 
-        return JSONResponse({
-            "success": True,
-            "chunk_count": chunk_count,
-            "filename": file.filename,
-        })
-
-    except Exception as e:
-        return JSONResponse({"error": str(e)}, status_code=500)
+        except Exception as e:
+            results.append({"filename": file.filename, "error": str(e)})
+        
+    return JSONResponse({
+        "success": True,
+        "documents": results
+    })
 
 
 @app.post("/ask")
