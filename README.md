@@ -5,7 +5,7 @@ Chat with your PDF documents using RAG and Claude API.
 ```
 file-master/
 ├── app.py              # FastAPI server, routes
-├── rag.py              # Chunks, embeddings, semantic search
+├── rag.py              # Chunks, embeddings, hybrid search (BM25 + vector)
 ├── claude_client.py    # Claude API client
 ├── requirements.txt
 ├── .env                # Your API key
@@ -52,13 +52,13 @@ pdfplumber extracts the text
   ↓
 rag.py splits it into chunks of ~200 words
   ↓
-Each chunk → vector via sentence-transformers (multi-qa-mpnet-base-dot-v1)
+Each chunk → vector via sentence-transformers + BM25 keyword index
   ↓
 User asks a question
   ↓
-Question also → vector
+Vector search (dot product) + BM25 keyword search run in parallel
   ↓
-Dot product similarity finds top-4 relevant chunks
+Results merged with Reciprocal Rank Fusion → top-4 chunks
   ↓
 Claude answers based on those chunks
 ```
